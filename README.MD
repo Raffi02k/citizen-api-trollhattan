@@ -201,11 +201,3 @@ Projektet utvecklas som en del av arbetet med att anpassa invånarportalen till 
 Detta Citizen API är en Trollhättan-specifik implementation och är inte samma tjänst som Sundsvalls kommuns Citizen API, även om syftet och integrationsmönstret är liknande.
 
 ````
-
----
-
-Här är också en **kortare och mer professionell version av inledningen**, om du vill ha README:n lite mer “enterprise”:
-
-```md
-Citizen API är en intern mikrotjänst för Trollhättans stad som ansvarar för att mappa invånaridentitet till ett stabilt internt `partyId`. Tjänsten används som stöd för invånarportalens autentiserings- och integrationsflöden och utgör en grundläggande identitetskomponent i den lokala systemarkitekturen.
-````
