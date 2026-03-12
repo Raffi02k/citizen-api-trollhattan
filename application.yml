@@ -1,12 +1,21 @@
 spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
-      - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
-      - org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration
+  application:
+    name: citizen-api
+  
+  datasource:
+    url: jdbc:h2:mem:citizendb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
-# This is for development only, for production we will use real database and real flyway migration in the future
-
+  flyway:
+    enabled: false # Disabled for Phase 1 as we haven't created migration scripts yet
 
 server:
   port: 8080

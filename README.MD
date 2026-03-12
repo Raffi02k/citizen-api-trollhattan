@@ -123,6 +123,42 @@ src/
 └── test/
 ```
 
+Mer detaljerad projektstruktur:
+```text
+se.trollhattan.citizenapi
+├── CitizenApiApplication.java         JavaDoc
+│
+├── api/
+│   ├── HealthController.java           
+│   ├── CitizenController.java          REST controller for citizen endpoints
+│   └── model/
+│       ├── CitizenRequest.java         DTO for POST body
+│       ├── CitizenResponse.java        DTO for citizen data responses
+│       └── GuidResponse.java           DTO for partyId/guid responses
+│
+├── service/
+│   ├── CitizenService.java             Business logic layer
+│   └── mapper/
+│       └── CitizenMapper.java          Entity ↔ DTO conversions
+│
+├── integration/
+│   └── db/
+│       ├── CitizenRepository.java      Spring Data JPA repository
+│       └── model/
+│           └── CitizenEntity.java      JPA entity for citizens table
+│
+├── configuration/
+│   └── OpenApiConfig.java              Swagger/OpenAPI config bean
+│
+├── exception/
+│   ├── CitizenNotFoundException.java   404 exception
+│   ├── GlobalExceptionHandler.java     @ControllerAdvice for all errors
+│   └── ApiError.java                   [NEW] Standardized error response body
+│
+└── util/
+    └── PersonNumberValidator.java      Swedish person number validation
+```
+
 ## Hur tjänsten passar in i lösningen
 
 Tjänsten är tänkt att användas av invånarportalen på följande sätt:
@@ -200,4 +236,3 @@ Projektet utvecklas som en del av arbetet med att anpassa invånarportalen till 
 
 Detta Citizen API är en Trollhättan-specifik implementation och är inte samma tjänst som Sundsvalls kommuns Citizen API, även om syftet och integrationsmönstret är liknande.
 
-````
