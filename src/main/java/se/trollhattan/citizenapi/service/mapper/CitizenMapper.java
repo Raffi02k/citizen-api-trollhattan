@@ -6,9 +6,6 @@ import se.trollhattan.citizenapi.api.model.CitizenResponse;
 import se.trollhattan.citizenapi.api.model.GuidResponse;
 import se.trollhattan.citizenapi.integration.db.model.CitizenEntity;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 /**
  * Maps between database entities and API DTOs.
  */
