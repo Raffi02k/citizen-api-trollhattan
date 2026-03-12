@@ -1,12 +1,21 @@
 package se.trollhattan.citizenapi.api.model;
 
-import java.util.UUID;
+public class GuidResponse {
 
-/**
- * Response body containing only a citizen's partyId.
- *
- * @param partyId the stable UUID/GUID assigned to the citizen
- */
-public record GuidResponse(
-        UUID partyId) {
+        private String partyId;
+
+        public GuidResponse() {
+        }
+
+        public GuidResponse(String partyId) {
+                this.partyId = partyId;
+        }
+
+        public String getPartyId() {
+                return partyId;
+        }
+
+        public void setPartyId(String partyId) {
+                this.partyId = partyId;
+        }
 }
