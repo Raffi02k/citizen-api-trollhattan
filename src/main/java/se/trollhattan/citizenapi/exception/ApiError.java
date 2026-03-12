@@ -1,30 +1,20 @@
 package se.trollhattan.citizenapi.exception;
 
-import java.time.LocalDateTime;
+public class ApiError {
+    private String error;
 
-/**
- * Standard error response body returned by the API.
- *
- * @param status    the HTTP status code
- * @param error     a short error label
- * @param message   a description of what went wrong
- * @param timestamp when the error occurred
- */
-public record ApiError(
-        int status,
-        String error,
-        String message,
-        LocalDateTime timestamp) {
+    public ApiError() {
+    }
 
-    /**
-     * Creates an ApiError with the current timestamp.
-     *
-     * @param status  HTTP status code
-     * @param error   short error label
-     * @param message descriptive error message
-     * @return a new ApiError with the current timestamp
-     */
-    public static ApiError of(int status, String error, String message) {
-        return new ApiError(status, error, message, LocalDateTime.now());
+    public ApiError(String error) {
+        this.error = error;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 }
