@@ -1,21 +1,24 @@
 package se.trollhattan.citizenapi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "citizen")
+@Table(name = "citizen", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_citizen_municipality_person", columnNames = { "municipality_id", "person_number" })
+})
 public class CitizenEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "municipality_id", nullable = false)
     private String municipalityId;
+
+    @Column(name = "person_number", nullable = false)
     private String personNumber;
+
+    @Column(name = "party_id", nullable = false)
     private String partyId;
 
     public CitizenEntity() {
