@@ -112,10 +112,14 @@ src/
 ├── main/
 │   ├── java/se/trollhattan/citizenapi/
 │   │   ├── api/
-│   │   ├── service/
-│   │   ├── integration/
+│   │   │   ├── CitizenController.java
+│   │   │   ├── HealthController.java
+│   │   │   └── model/
 │   │   ├── configuration/
+│   │   ├── entity/
 │   │   ├── exception/
+│   │   ├── repository/
+│   │   ├── service/
 │   │   └── util/
 │   └── resources/
 │       ├── application.yml
@@ -123,40 +127,40 @@ src/
 └── test/
 ```
 
-Mer detaljerad projektstruktur:
+Detaljerad paketstruktur:
 ```text
 se.trollhattan.citizenapi
-├── CitizenApiApplication.java         JavaDoc
+├── CitizenApiApplication.java
 │
 ├── api/
-│   ├── HealthController.java           
-│   ├── CitizenController.java          REST controller for citizen endpoints
+│   ├── CitizenController.java
+│   ├── HealthController.java
 │   └── model/
-│       ├── CitizenRequest.java         DTO for POST body
-│       ├── CitizenResponse.java        DTO for citizen data responses
-│       └── GuidResponse.java           DTO for partyId/guid responses
-│
-├── service/
-│   ├── CitizenService.java             Business logic layer
-│   └── mapper/
-│       └── CitizenMapper.java          Entity ↔ DTO conversions
-│
-├── integration/
-│   └── db/
-│       ├── CitizenRepository.java      Spring Data JPA repository
-│       └── model/
-│           └── CitizenEntity.java      JPA entity for citizens table
+│       ├── CitizenRequest.java
+│       ├── CitizenResponse.java
+│       └── GuidResponse.java
 │
 ├── configuration/
-│   └── OpenApiConfig.java              Swagger/OpenAPI config bean
+│   └── OpenApiConfig.java
+│
+├── entity/
+│   └── CitizenEntity.java
 │
 ├── exception/
-│   ├── CitizenNotFoundException.java   404 exception
-│   ├── GlobalExceptionHandler.java     @ControllerAdvice for all errors
-│   └── ApiError.java                   [NEW] Standardized error response body
+│   ├── ApiError.java
+│   ├── CitizenNotFoundException.java
+│   └── GlobalExceptionHandler.java
+│
+├── repository/
+│   └── CitizenRepository.java
+│
+├── service/
+│   ├── CitizenService.java
+│   └── mapper/
+│       └── CitizenMapper.java
 │
 └── util/
-    └── PersonNumberValidator.java      Swedish person number validation
+    └── PersonNumberValidator.java
 ```
 
 ## Hur tjänsten passar in i lösningen
@@ -235,4 +239,3 @@ Projektet utvecklas som en del av arbetet med att anpassa invånarportalen till 
 ## Notering
 
 Detta Citizen API är en Trollhättan-specifik implementation och är inte samma tjänst som Sundsvalls kommuns Citizen API, även om syftet och integrationsmönstret är liknande.
-
