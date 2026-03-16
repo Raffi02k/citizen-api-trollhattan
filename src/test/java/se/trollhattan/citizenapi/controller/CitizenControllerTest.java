@@ -8,7 +8,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import se.trollhattan.citizenapi.api.CitizenController;
-import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
 import se.trollhattan.citizenapi.service.CitizenService;
 
 import static org.mockito.Mockito.when;
@@ -39,15 +38,14 @@ class CitizenControllerTest {
     }
 
     @Test
-    @DisplayName("Should return 404 when citizen does not exist")
-    void shouldReturn404WhenCitizenDoesNotExist() throws Exception {
+    @DisplayName("Should return 200 and partyId when citizen does not exist")
+    void shouldReturnPartyIdWhenCitizenDoesNotExist() throws Exception {
         when(citizenService.getGuid("1488", "111111111111"))
-                .thenThrow(new CitizenNotFoundException(
-                        "No citizen found for municipalityId=1488 and personNumber=111111111111"));
+                .thenReturn("generated-party-id-456");
 
         mockMvc.perform(get("/1488/111111111111/guid"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isOk())
+                .andExpect(content().string("generated-party-id-456"));
     }
 
     @Test

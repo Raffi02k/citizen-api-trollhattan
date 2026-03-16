@@ -2,7 +2,6 @@ package se.trollhattan.citizenapi.service;
 
 import org.springframework.stereotype.Service;
 import se.trollhattan.citizenapi.entity.CitizenEntity;
-import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
 import se.trollhattan.citizenapi.repository.CitizenRepository;
 
 import java.util.UUID;
@@ -17,15 +16,7 @@ public class CitizenService {
     }
 
     public String getGuid(String municipalityId, String personNumber) {
-        validateInput(municipalityId, personNumber);
-
-        CitizenEntity citizen = citizenRepository
-                .findByMunicipalityIdAndPersonNumber(municipalityId, personNumber)
-                .orElseThrow(() -> new CitizenNotFoundException(
-                        "No citizen found for municipalityId=" + municipalityId
-                                + " and personNumber=" + personNumber));
-
-        return citizen.getPartyId();
+        return getOrCreateGuid(municipalityId, personNumber);
     }
 
     public String getOrCreateGuid(String municipalityId, String personNumber) {
