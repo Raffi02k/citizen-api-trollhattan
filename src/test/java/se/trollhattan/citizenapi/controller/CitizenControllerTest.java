@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import se.trollhattan.citizenapi.api.CitizenController;
-import se.trollhattan.citizenapi.api.model.GuidResponse;
 import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
 import se.trollhattan.citizenapi.service.CitizenService;
 
@@ -33,12 +31,11 @@ class CitizenControllerTest {
     @DisplayName("Should return 200 and partyId when citizen exists")
     void shouldReturnPartyIdWhenCitizenExists() throws Exception {
         when(citizenService.getGuid("1488", "199001011234"))
-                .thenReturn(new GuidResponse("test-party-id-123"));
+                .thenReturn("test-party-id-123");
 
         mockMvc.perform(get("/1488/199001011234/guid"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.partyId").value("test-party-id-123"));
+                .andExpect(content().string("test-party-id-123"));
     }
 
     @Test

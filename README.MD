@@ -55,12 +55,10 @@ Används för att verifiera att tjänsten är igång.
 Exempel:
 `GET /1488/199001011234/guid`
 
-Exempel på svar:
-```json
-{
-  "partyId": "550e8400-e29b-41d4-a716-446655440000"
-}
-````
+Exempel på svar (rå sträng i response body):
+```text
+550e8400-e29b-41d4-a716-446655440000
+```
 
 ### Hämta citizen via partyId
 
