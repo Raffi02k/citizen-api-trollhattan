@@ -52,6 +52,8 @@ Används för att verifiera att tjänsten är igång.
 ### Hämta guid/partyId från personnummer
 `GET /{municipalityId}/{personNumber}/guid`
 
+Om invånaren inte finns skapas en ny citizen-post med nytt `partyId` (find-or-create).
+
 Exempel:
 `GET /1488/199001011234/guid`
 
