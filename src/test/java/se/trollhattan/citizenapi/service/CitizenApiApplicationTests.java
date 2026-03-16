@@ -2,7 +2,6 @@ package se.trollhattan.citizenapi.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import se.trollhattan.citizenapi.api.model.GuidResponse;
 import se.trollhattan.citizenapi.entity.CitizenEntity;
 import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
 import se.trollhattan.citizenapi.repository.CitizenRepository;
@@ -35,9 +34,9 @@ class CitizenServiceTest {
         when(citizenRepository.findByMunicipalityIdAndPersonNumber("1488", "199001011234"))
                 .thenReturn(Optional.of(citizen));
 
-        GuidResponse response = citizenService.getGuid("1488", "199001011234");
+        String response = citizenService.getGuid("1488", "199001011234");
 
-        assertEquals("test-party-id-123", response.getPartyId());
+        assertEquals("test-party-id-123", response);
     }
 
     @Test

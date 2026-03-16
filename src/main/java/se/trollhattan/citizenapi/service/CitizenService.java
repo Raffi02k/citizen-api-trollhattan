@@ -1,7 +1,6 @@
 package se.trollhattan.citizenapi.service;
 
 import org.springframework.stereotype.Service;
-import se.trollhattan.citizenapi.api.model.GuidResponse;
 import se.trollhattan.citizenapi.entity.CitizenEntity;
 import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
 import se.trollhattan.citizenapi.repository.CitizenRepository;
@@ -17,7 +16,7 @@ public class CitizenService {
         this.citizenRepository = citizenRepository;
     }
 
-    public GuidResponse getGuid(String municipalityId, String personNumber) {
+    public String getGuid(String municipalityId, String personNumber) {
         validateInput(municipalityId, personNumber);
 
         CitizenEntity citizen = citizenRepository
@@ -26,15 +25,15 @@ public class CitizenService {
                         "No citizen found for municipalityId=" + municipalityId
                                 + " and personNumber=" + personNumber));
 
-        return new GuidResponse(citizen.getPartyId());
+        return citizen.getPartyId();
     }
 
-    public GuidResponse getOrCreateGuid(String municipalityId, String personNumber) {
+    public String getOrCreateGuid(String municipalityId, String personNumber) {
         validateInput(municipalityId, personNumber);
 
         return citizenRepository
                 .findByMunicipalityIdAndPersonNumber(municipalityId, personNumber)
-                .map(citizen -> new GuidResponse(citizen.getPartyId()))
+                .map(CitizenEntity::getPartyId)
                 .orElseGet(() -> {
                     String newPartyId = UUID.randomUUID().toString();
 
@@ -45,7 +44,7 @@ public class CitizenService {
 
                     CitizenEntity savedCitizen = citizenRepository.save(newCitizen);
 
-                    return new GuidResponse(savedCitizen.getPartyId());
+                    return savedCitizen.getPartyId();
                 });
     }
 
