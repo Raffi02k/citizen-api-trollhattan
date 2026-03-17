@@ -3,13 +3,13 @@ package se.trollhattan.citizenapi.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.trollhattan.citizenapi.entity.CitizenEntity;
-import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
 import se.trollhattan.citizenapi.repository.CitizenRepository;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,12 +40,15 @@ class CitizenServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenCitizenDoesNotExist() {
+    void shouldCreatePartyIdWhenCitizenDoesNotExist() {
         when(citizenRepository.findByMunicipalityIdAndPersonNumber("1488", "111111111111"))
                 .thenReturn(Optional.empty());
+        when(citizenRepository.save(any(CitizenEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertThrows(CitizenNotFoundException.class,
-                () -> citizenService.getGuid("1488", "111111111111"));
+        String response = citizenService.getGuid("1488", "111111111111");
+
+        assertEquals(36, response.length());
     }
 
     @Test
