@@ -21,7 +21,6 @@ class CitizenServiceTest {
     @BeforeEach
     void setUp() {
         citizenRepository = mock(CitizenRepository.class);
-        citizenService = new CitizenService(citizenRepository);
     }
 
     @Test
