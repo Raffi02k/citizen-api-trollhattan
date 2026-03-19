@@ -1,24 +1,43 @@
 package se.trollhattan.citizenapi.service;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import se.trollhattan.citizenapi.configuration.KirProperties;
+import se.trollhattan.citizenapi.api.model.KirCitizenResponse;
 
-/**
- * Temporary service for KIR lookup.
- *
- * Right now this class is only a placeholder so we can build the
- * Citizen API flow before we know the real KIR integration details.
- *
- * After the meeting about KIR, this class can be updated to call
- * the real KIR API or other technical integration point.
- */
 @Service
 public class KirService {
 
-    public boolean existsByPersonNumber(String personNumber) {
-        // Temporary fake KIR logic for testing
-        return "199001011234".equals(personNumber)
-                || "198512121212".equals(personNumber)
-                || "200001011234".equals(personNumber);
+    private final RestClient restClient;
+    private final KirProperties kirProperties;
 
+    public KirService(RestClient.Builder restClientBuilder, KirProperties kirProperties) {
+        this.kirProperties = kirProperties;
+        this.restClient = restClientBuilder
+                .baseUrl(kirProperties.getBaseUrl())
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader("x-api-key", kirProperties.getApiKey())
+                .build();
+    }
+
+    public KirCitizenResponse findByPersonNumber(String personNumber) {
+        String path = kirProperties.getPersonLookupPath()
+                .replace("{personNumber}", personNumber);
+
+        return restClient.get()
+                .uri(path)
+                .retrieve()
+                .body(KirCitizenResponse.class);
+    }
+
+    public boolean existsByPersonNumber(String personNumber) {
+        try {
+            KirCitizenResponse response = findByPersonNumber(personNumber);
+            return response != null && response.getPersonNumber() != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

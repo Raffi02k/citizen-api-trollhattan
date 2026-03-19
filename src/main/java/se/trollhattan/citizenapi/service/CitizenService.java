@@ -2,6 +2,7 @@ package se.trollhattan.citizenapi.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.trollhattan.citizenapi.api.model.KirCitizenResponse;
 import se.trollhattan.citizenapi.entity.CitizenEntity;
 import se.trollhattan.citizenapi.repository.CitizenRepository;
 import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
@@ -37,20 +38,20 @@ public class CitizenService {
         }
 
         // 3. Call KIR
-        boolean existsInKir = kirService.existsByPersonNumber(personNumber);
+        KirCitizenResponse kirCitizen = kirService.findByPersonNumber(personNumber);
 
         // 4. If KIR confirms citizen exists -> create local citizen and return new
         // partyId
-        if (existsInKir) {
+        if (kirCitizen != null) {
             String newPartyId = UUID.randomUUID().toString();
 
             CitizenEntity newCitizen = new CitizenEntity();
             newCitizen.setMunicipalityId(municipalityId);
-            newCitizen.setPersonNumber(personNumber);
+            newCitizen.setPersonNumber(kirCitizen.getPersonNumber());
             newCitizen.setPartyId(newPartyId);
 
-            CitizenEntity savedCitizen = citizenRepository.save(newCitizen);
-            return savedCitizen.getPartyId();
+            citizenRepository.save(newCitizen);
+            return newPartyId;
         }
 
         // 5. If not found in KIR -> throw error
