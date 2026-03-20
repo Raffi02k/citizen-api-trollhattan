@@ -2,7 +2,7 @@ package se.trollhattan.citizenapi.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import se.trollhattan.citizenapi.api.model.KirCitizenResponse;
+import se.trollhattan.citizenapi.api.model.NavetPersonpostResponse;
 import se.trollhattan.citizenapi.entity.CitizenEntity;
 import se.trollhattan.citizenapi.repository.CitizenRepository;
 import se.trollhattan.citizenapi.exception.CitizenNotFoundException;
@@ -13,11 +13,11 @@ import java.util.UUID;
 public class CitizenService {
 
     private final CitizenRepository citizenRepository;
-    private final KirService kirService;
+    private final NavetService navetService;
 
-    public CitizenService(CitizenRepository citizenRepository, KirService kirService) {
+    public CitizenService(CitizenRepository citizenRepository, NavetService navetService) {
         this.citizenRepository = citizenRepository;
-        this.kirService = kirService;
+        this.navetService = navetService;
     }
 
     public String getGuid(String municipalityId, String personNumber) {
@@ -38,16 +38,16 @@ public class CitizenService {
         }
 
         // 3. Call KIR
-        KirCitizenResponse kirCitizen = kirService.findByPersonNumber(personNumber);
+        NavetPersonpostResponse navetCitizen = navetService.findByPersonNumber(personNumber);
 
         // 4. If KIR confirms citizen exists -> create local citizen and return new
         // partyId
-        if (kirCitizen != null) {
+        if (navetCitizen != null) {
             String newPartyId = UUID.randomUUID().toString();
 
             CitizenEntity newCitizen = new CitizenEntity();
             newCitizen.setMunicipalityId(municipalityId);
-            newCitizen.setPersonNumber(kirCitizen.getPersonNumber());
+            newCitizen.setPersonNumber(navetCitizen.getPersonNumber());
             newCitizen.setPartyId(newPartyId);
 
             citizenRepository.save(newCitizen);

@@ -26,9 +26,11 @@ server:
 app:
   municipality-id: 1488
 
-kir:
+navet:
   base-url: http://localhost:9090
-  api-key: test-api-key
+  api-key: test-api
   connect-timeout-ms: 3000
   read-timeout-ms: 5000
   person-lookup-path: /api/v1/citizens/{personNumber}
+
+
