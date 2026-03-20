@@ -8,7 +8,7 @@ target/
 *.h2.db
 *.mv.db
 *.trace.db
-application.yml
+application.yaml
 
 ### STS ###
 .apt_generated
