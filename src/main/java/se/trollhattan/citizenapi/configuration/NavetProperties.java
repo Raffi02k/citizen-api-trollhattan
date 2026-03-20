@@ -2,8 +2,8 @@ package se.trollhattan.citizenapi.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "kir")
-public class KirProperties {
+@ConfigurationProperties(prefix = "navet")
+public class NavetProperties {
 
     private String baseUrl;
     private String apiKey;

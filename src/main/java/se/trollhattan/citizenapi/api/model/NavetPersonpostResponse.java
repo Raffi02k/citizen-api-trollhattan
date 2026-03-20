@@ -1,12 +1,12 @@
 package se.trollhattan.citizenapi.api.model;
 
-public class KirCitizenResponse {
+public class NavetPersonpostResponse {
     private String personNumber;
     private String firstName;
     private String lastName;
     private String status;
 
-    public KirCitizenResponse() {
+    public NavetPersonpostResponse() {
     }
 
     public String getPersonNumber() {

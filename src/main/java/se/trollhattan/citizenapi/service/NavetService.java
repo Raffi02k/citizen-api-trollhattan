@@ -4,16 +4,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import se.trollhattan.citizenapi.configuration.KirProperties;
-import se.trollhattan.citizenapi.api.model.KirCitizenResponse;
+import se.trollhattan.citizenapi.configuration.NavetProperties;
+import se.trollhattan.citizenapi.api.model.NavetPersonpostResponse;
 
 @Service
-public class KirService {
+public class NavetService {
 
     private final RestClient restClient;
-    private final KirProperties kirProperties;
+    private final NavetProperties kirProperties;
 
-    public KirService(RestClient.Builder restClientBuilder, KirProperties kirProperties) {
+    public NavetService(RestClient.Builder restClientBuilder, NavetProperties kirProperties) {
         this.kirProperties = kirProperties;
         this.restClient = restClientBuilder
                 .baseUrl(kirProperties.getBaseUrl())
@@ -22,19 +22,19 @@ public class KirService {
                 .build();
     }
 
-    public KirCitizenResponse findByPersonNumber(String personNumber) {
+    public NavetPersonpostResponse findByPersonNumber(String personNumber) {
         String path = kirProperties.getPersonLookupPath()
                 .replace("{personNumber}", personNumber);
 
         return restClient.get()
                 .uri(path)
                 .retrieve()
-                .body(KirCitizenResponse.class);
+                .body(NavetPersonpostResponse.class);
     }
 
     public boolean existsByPersonNumber(String personNumber) {
         try {
-            KirCitizenResponse response = findByPersonNumber(personNumber);
+            NavetPersonpostResponse response = findByPersonNumber(personNumber);
             return response != null && response.getPersonNumber() != null;
         } catch (Exception e) {
             return false;
