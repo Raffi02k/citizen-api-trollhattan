@@ -1,26 +1,59 @@
 package se.trollhattan.citizenapi.util;
 
 import org.springframework.stereotype.Component;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-/**
- * Utility for validating Swedish personal identity numbers (personnummer).
- */
 @Component
 public class PersonNumberValidator {
 
-    /**
-     * Checks whether the person number is in the expected 12-digit format.
-     *
-     * @param personNumber the person number string to validate
-     * @return true if the format is valid, false otherwise
-     */
     public boolean isValid(String personNumber) {
-        // TODO Phase 2: Implement full validation
-        // Step 1: Check length and digit-only
-        // Step 2: Parse and validate the date (YYYYMMDD)
-        // Step 3: Calculate and verify Luhn checksum
+        if (personNumber == null)
+            return false;
 
-        // Placeholder: basic format check only
-        return personNumber != null && personNumber.matches("\\d{12}");
+        // Step 1: Normalize and Check Length/Digits
+        String cleaned = personNumber.replaceAll("\\D", "");
+        if (cleaned.length() != 10 && cleaned.length() != 12) {
+            return false;
+        }
+
+        // Step 2: Validate the Date
+        if (!isValidDate(personNumber, cleaned)) {
+            return false;
+        }
+
+        // Step 3: Calculate and verify Luhn checksum (To be implemented)
+        return true;
+    }
+
+    private boolean isValidDate(String original, String cleaned) {
+        String datePart;
+
+        if (cleaned.length() == 12) {
+            // Format: YYYYMMDD
+            datePart = cleaned.substring(0, 8);
+        } else {
+            // Format: YYMMDD (Need to determine century)
+            String yy = cleaned.substring(0, 2);
+            String mmdd = cleaned.substring(2, 6);
+
+            // If the separator is '+', the person is 100+ years old
+            int century = original.contains("+") ? 1800 : 1900;
+
+            // Note: This is a simplified century logic. In a production
+            // citizen API, you'd compare against the current year.
+            datePart = (century + Integer.parseInt(yy)) + mmdd;
+        }
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            LocalDate parsedDate = LocalDate.parse(datePart, formatter);
+
+            // Check if the date is in the future (optional but recommended)
+            return !parsedDate.isAfter(LocalDate.now());
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }

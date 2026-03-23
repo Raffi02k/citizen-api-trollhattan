@@ -13,11 +13,11 @@ import java.util.UUID;
 public class CitizenService {
 
     private final CitizenRepository citizenRepository;
-    private final NavetService navetService;
+    private final CitizenLookupService citizenLookupService;
 
-    public CitizenService(CitizenRepository citizenRepository, NavetService navetService) {
+    public CitizenService(CitizenRepository citizenRepository, CitizenLookupService citizenLookupService) {
         this.citizenRepository = citizenRepository;
-        this.navetService = navetService;
+        this.citizenLookupService = citizenLookupService;
     }
 
     public String getGuid(String municipalityId, String personNumber) {
@@ -37,10 +37,10 @@ public class CitizenService {
             return existingCitizen.get().getPartyId();
         }
 
-        // 3. Call KIR
-        NavetPersonpostResponse navetCitizen = navetService.findByPersonNumber(personNumber);
+        // 3. Call external lookup
+        NavetPersonpostResponse navetCitizen = citizenLookupService.findByPersonNumber(personNumber);
 
-        // 4. If KIR confirms citizen exists -> create local citizen and return new
+        // 4. If lookup confirms citizen exists -> create local citizen and return new
         // partyId
         if (navetCitizen != null) {
             String newPartyId = UUID.randomUUID().toString();
@@ -54,9 +54,9 @@ public class CitizenService {
             return newPartyId;
         }
 
-        // 5. If not found in KIR -> throw error
+        // 5. If not found in external lookup -> throw error
         throw new CitizenNotFoundException(
-                "Citizen was not found locally and was not found in KIR for personNumber=" + personNumber);
+                "Citizen was not found locally and was not found in external lookup for personNumber=" + personNumber);
     }
 
     private void validateInput(String municipalityId, String personNumber) {
