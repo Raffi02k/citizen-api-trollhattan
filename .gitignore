@@ -9,6 +9,7 @@ target/
 *.mv.db
 *.trace.db
 application.yaml
+/data/
 
 ### STS ###
 .apt_generated

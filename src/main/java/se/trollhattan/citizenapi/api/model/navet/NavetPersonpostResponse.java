@@ -1,4 +1,4 @@
-package se.trollhattan.citizenapi.api.model;
+package se.trollhattan.citizenapi.api.model.navet;
 
 public class NavetPersonpostResponse {
     private String personNumber;
