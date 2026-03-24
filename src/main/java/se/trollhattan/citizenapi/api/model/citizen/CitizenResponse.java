@@ -1,4 +1,4 @@
-package se.trollhattan.citizenapi.api.model;
+package se.trollhattan.citizenapi.api.model.citizen;
 
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ import java.util.UUID;
  * @param partyId        the stable UUID/GUID assigned to the citizen
  */
 public record CitizenResponse(
-        String municipalityId,
-        String personNumber,
-        UUID partyId) {
+                String municipalityId,
+                String personNumber,
+                UUID partyId) {
 }

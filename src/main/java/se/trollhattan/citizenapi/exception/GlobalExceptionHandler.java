@@ -19,4 +19,28 @@ public class GlobalExceptionHandler {
         ApiError errorResponse = new ApiError(ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
+
+    @ExceptionHandler(NavetBadRequestException.class)
+    public ResponseEntity<ApiError> handleNavetBadRequestException(NavetBadRequestException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
+    }
+
+    @ExceptionHandler(NavetUnauthorizedException.class)
+    public ResponseEntity<ApiError> handleNavetUnauthorizedException(NavetUnauthorizedException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
+    }
+
+    @ExceptionHandler(NavetRateLimitException.class)
+    public ResponseEntity<ApiError> handleNavetRateLimitException(NavetRateLimitException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
+    }
+
+    @ExceptionHandler(NavetUnavailableException.class)
+    public ResponseEntity<ApiError> handleNavetUnavailableException(NavetUnavailableException ex) {
+        ApiError errorResponse = new ApiError(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
+    }
 }

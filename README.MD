@@ -136,12 +136,17 @@ se.trollhattan.citizenapi
 │   ├── CitizenController.java
 │   ├── HealthController.java
 │   └── model/
-│       ├── CitizenRequest.java
-│       ├── CitizenResponse.java
-│       └── GuidResponse.java
+│       ├── citizen/
+│       │   ├── CitizenLookupResult.java
+│       │   ├── CitizenRequest.java
+│       │   └── CitizenResponse.java
+│       └── navet/
+│           ├── NavetLookupRequest.java
+│           └── NavetLookupResponse.java
 │
 ├── configuration/
-│   └── OpenApiConfig.java
+│   ├── NavetProperties.java
+│   └── RestClientConfig.java
 │
 ├── entity/
 │   └── CitizenEntity.java
@@ -149,32 +154,53 @@ se.trollhattan.citizenapi
 ├── exception/
 │   ├── ApiError.java
 │   ├── CitizenNotFoundException.java
-│   └── GlobalExceptionHandler.java
+│   ├── GlobalExceptionHandler.java
+│   ├── NavetBadRequestException.java
+│   ├── NavetRateLimitException.java
+│   ├── NavetUnauthorizedException.java
+│   └── NavetUnavailableException.java
 │
 ├── repository/
 │   └── CitizenRepository.java
 │
 ├── service/
+│   ├── CitizenLookupService.java
 │   ├── CitizenService.java
-│   └── mapper/
-│       └── CitizenMapper.java
+│   ├── NavetService.java
+│   └── NavetTokenService.java
 │
 └── util/
     └── PersonNumberValidator.java
 ```
 
-## Hur tjänsten passar in i lösningen
+## Navet-integration
 
-Tjänsten är tänkt att användas av invånarportalen på följande sätt:
+Tjänsten mot Navet använder Skatteverkets REST API (v3/hamta).
 
-1. Invånaren loggar in via SSO/SAML
-2. Portalen får ett `citizenIdentifier`
-3. Portalens backend anropar Citizen API
-4. Citizen API returnerar ett `partyId`
-5. Portalens backend sparar detta i användarsessionen
-6. Övriga API-anrop använder `partyId` för att hämta rätt data
+### Autentisering och säkerhet
+- **OAuth 2.0**: Använder Client Credentials Grant (CCG) för att hämta access tokens.
+- **Token Caching**: Tokens cachas i minnet med en säkerhetsmarginal för att undvika onödiga anrop till token-tjänsten.
+- **API Gateway**: Kräver `client_id` och `client_secret` som headers för anrop via Trollhättans API Gateway.
+- **Correlation ID**: Skickar `skv_client_correlation_id` för att möjliggöra spårbarhet hos Skatteverket.
+
+### Konfiguration
+Alla anslutningsuppgifter sköts via miljövariabler i `application.yml` (se sektion för lokal utveckling).
 
 ## Lokal utveckling
+
+### Miljövariabler
+För att köra mot Navets testmiljö behövs följande variabler (kontakta IT-avdelningen för aktuella värden):
+
+```bash
+export NAVET_BASE_URL=...
+export NAVET_TOKEN_URL=...
+export NAVET_OAUTH_CLIENT_ID=...
+export NAVET_OAUTH_CLIENT_SECRET=...
+export NAVET_API_GW_CLIENT_ID=...
+export NAVET_API_GW_CLIENT_SECRET=...
+export NAVET_ORGANISATIONSNUMMER=...
+export NAVET_BESTALLNINGSIDENTITET=...
+```
 
 ### Starta applikationen
 
@@ -182,18 +208,6 @@ Applikationen kan köras via IntelliJ eller med Maven:
 
 ```bash
 ./mvnw spring-boot:run
-```
-
-### Bygg projektet
-
-```bash
-./mvnw clean install
-```
-
-### Kör tester
-
-```bash
-./mvnw test
 ```
 
 ## Databas
@@ -213,24 +227,21 @@ Exempel på datamodell:
 
 ## Nuvarande status
 
-Detta projekt är under uppbyggnad och befinner sig i en första uppstartsfas.
+Tjänsten är nu i en fas där grundläggande infrastruktur för Navet-integration är på plats.
 
-Nuvarande fokus är att:
-
-* få Spring Boot-projektet att starta korrekt
-* bygga första health endpoint
-* skapa första versionen av citizen-uppslagning
-* göra tjänsten kompatibel med invånarportalens login-flöde
+* [x] Projektstruktur uppsatt
+* [x] Health endpoint fungerar
+* [x] Navet-integration (REST + OAuth) implementerad
+* [x] Validering av personnummer (Luhn) klar
+* [x] Felmappning av Navet-fel till interna felkoder
+* [x] Race-condition skydd vid persistens
 
 ## Nästa steg
 
-* lägga till `application.yml`
-* konfigurera PostgreSQL
-* skapa första Flyway-migrering
-* bygga `Citizen` entity och repository
-* implementera `/guid` endpoint
-* koppla portalen mot detta API
-* verifiera end-to-end login-flöde
+* [ ] Konfigurera PostgreSQL för produktion
+* [ ] Lägga till OpenAPI / Swagger dokumentation
+* [ ] Förbättra enhetstester för NavetService
+* [ ] Integrera med Trollhättans portal (Mina sidor)
 
 ## Ägare
 
