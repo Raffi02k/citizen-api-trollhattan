@@ -1,34 +1,22 @@
+# Citizen API
 
-# Citizen API - Trollhättans stad
+Citizen API är en mikrotjänst som anonymiserar och stabiliserar invånaridentitet genom att omvandla personnummer (eller liknande identifierare) till ett internt GUID/`partyId`.
 
-Citizen API är en mikrotjänst för att hantera grundläggande invånaridentitet i Trollhättans stads integrationsmiljö.
-
-Den här tjänsten används som en identitetsbrygga mellan inloggning via SSO/SAML och interna kommunala tjänster som behöver ett stabilt internt id för en invånare, till exempel `partyId`.
+Tjänsten är byggd för säkra, spårbara och skalbara API-anrop och fungerar som en identitetsbrygga mellan inloggning (SSO/SAML) och interna tjänster som kräver ett stabilt id.
 
 ## Syfte
 
-Målet med tjänsten är att översätta en invånares identitet, till exempel personnummer eller `citizenIdentifier`, till ett internt och stabilt `partyId` som andra system och API:er kan använda.
+Målet är att översätta en invånares identitet till ett internt GUID som andra system kan använda för ärenden, beslut, dokument och övriga integrationer.
 
-Detta behövs för att koppla en inloggad användare i invånarportalen till rätt ärenden, beslut, dokument och andra tjänster.
-
-## Bakgrund
-
-I den klonade lösningen från Sundsvalls kommun används ett externt Citizen API i login-flödet.  
-Efter att användaren loggat in via SAML hämtar portalen ett `citizenIdentifier` och anropar Citizen API för att få tillbaka ett internt `partyId/guid`.
-
-Trollhättans stad har i nuläget inte ett motsvarande Citizen API, därför byggs denna mikrotjänst från grunden.
-
-## Ansvar i första versionen
-
-Den första versionen av Citizen API fokuserar på minsta möjliga funktionalitet som krävs för att stödja invånarportalens login-flöde.
+## Översikt
 
 Tjänsten ska kunna:
 
-- ta emot ett personnummer eller citizenIdentifier
-- slå upp om invånaren redan finns registrerad
-- skapa en ny invånare om den inte finns
+- ta emot personnummer eller `citizenIdentifier`
+- slå upp om invånaren redan finns
+- skapa ny invånare vid behov (find-or-create)
 - returnera ett stabilt `partyId`
-- exponera ett enkelt REST-API för uppslagning
+- exponera ett REST-API för uppslagning och koppling
 
 ## Planerad funktionalitet
 
@@ -49,7 +37,7 @@ Tjänsten ska kunna:
 
 Används för att verifiera att tjänsten är igång.
 
-### Hämta guid/partyId från personnummer
+### Hämta GUID/partyId från personnummer
 `GET /{municipalityId}/{personNumber}/guid`
 
 Om invånaren inte finns skapas en ny citizen-post med nytt `partyId` (find-or-create).
@@ -90,6 +78,13 @@ Exempel på request:
   "lastName": "Andersson"
 }
 ```
+
+## Säkerhet och spårbarhet
+
+- **OAuth 2.0** för säkra server-till-server-anrop (Client Credentials Grant)
+- **Token caching** för minskade externa anrop och stabil drift
+- **API Gateway headers** för autentisering via integrationsplattform
+- **Correlation ID** för spårbarhet i upstream/downstream
 
 ## Teknisk stack
 
@@ -175,21 +170,15 @@ se.trollhattan.citizenapi
 
 ## Navet-integration
 
-Tjänsten mot Navet använder Skatteverkets REST API (v3/hamta).
-
-### Autentisering och säkerhet
-- **OAuth 2.0**: Använder Client Credentials Grant (CCG) för att hämta access tokens.
-- **Token Caching**: Tokens cachas i minnet med en säkerhetsmarginal för att undvika onödiga anrop till token-tjänsten.
-- **API Gateway**: Kräver `client_id` och `client_secret` som headers för anrop via Trollhättans API Gateway.
-- **Correlation ID**: Skickar `skv_client_correlation_id` för att möjliggöra spårbarhet hos Skatteverket.
+Tjänsten kan använda Skatteverkets REST API (v3/hamta) för verifiering och uppslagning.
 
 ### Konfiguration
-Alla anslutningsuppgifter sköts via miljövariabler i `application.yml` (se sektion för lokal utveckling).
+Alla anslutningsuppgifter sköts via miljövariabler i `application.yml`.
 
 ## Lokal utveckling
 
 ### Miljövariabler
-För att köra mot Navets testmiljö behövs följande variabler (kontakta IT-avdelningen för aktuella värden):
+För att köra mot Navets testmiljö behövs följande variabler:
 
 ```bash
 export NAVET_BASE_URL=...
@@ -212,7 +201,7 @@ Applikationen kan köras via IntelliJ eller med Maven:
 
 ## Databas
 
-I senare steg kommer tjänsten att använda PostgreSQL för att lagra citizens och genererade `partyId`.
+Tjänsten använder PostgreSQL för att lagra citizens och genererade `partyId`.
 
 Exempel på datamodell:
 
@@ -227,7 +216,7 @@ Exempel på datamodell:
 
 ## Nuvarande status
 
-Tjänsten är nu i en fas där grundläggande infrastruktur för Navet-integration är på plats.
+Tjänsten är i en fas där grundläggande infrastruktur för Navet-integration är på plats.
 
 * [x] Projektstruktur uppsatt
 * [x] Health endpoint fungerar
@@ -241,12 +230,4 @@ Tjänsten är nu i en fas där grundläggande infrastruktur för Navet-integrati
 * [ ] Konfigurera PostgreSQL för produktion
 * [ ] Lägga till OpenAPI / Swagger dokumentation
 * [ ] Förbättra enhetstester för NavetService
-* [ ] Integrera med Trollhättans portal (Mina sidor)
-
-## Ägare
-
-Projektet utvecklas som en del av arbetet med att anpassa invånarportalen till Trollhättans stad.
-
-## Notering
-
-Detta Citizen API är en Trollhättan-specifik implementation och är inte samma tjänst som Sundsvalls kommuns Citizen API, även om syftet och integrationsmönstret är liknande.
+* [ ] Integrera med invånarportal
